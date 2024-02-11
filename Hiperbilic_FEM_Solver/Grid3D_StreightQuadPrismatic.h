@@ -63,10 +63,10 @@ using namespace std;
  */
 struct BaseGrid3DStreightQuadPrismatic
 {
-    int CountOfDivision = 1; // Количество делений базовой настройки сетки; 1 - соответсвует тому что делений не было 2 тому что исходная область разделена в двое и.т.д
-    const int SizeOfCalculationAreaElemet = 7;
-    const int SizeOfBoundsAreaElement = 8;
-    const int SizeOfDivideParam = 3;
+    int32_t CountOfDivision = 1; // Количество делений базовой настройки сетки; 1 - соответсвует тому что делений не было 2 тому что исходная область разделена в двое и.т.д
+    const int32_t SizeOfCalculationAreaElemet = 7;
+    const int32_t SizeOfBoundsAreaElement = 8;
+    const int32_t SizeOfDivideParam = 3;
 
     /* Структура для базовой точки  */
     struct PointXZS
@@ -77,14 +77,14 @@ struct BaseGrid3DStreightQuadPrismatic
 
     struct DivideParamS
     {
-        int num;     // количество интервалов на которое нужно разделить отрезок
+        int32_t num;     // количество интервалов на которое нужно разделить отрезок
         double coef; // Коэффициент растяжения или сжатия
     };
-    int Nx = 0; // количество узлов вдоль горизонатального направления
-    int Ny = 0; // количество узлов вдоль вертикального направления
-    int Nz = 0; // количество узлов вдоль оси z
-    int L = 0;  // Количество подоблостей
-    int P = 0;  // Количество видов границ
+    int32_t Nx = 0; // количество узлов вдоль горизонатального направления
+    int32_t Ny = 0; // количество узлов вдоль вертикального направления
+    int32_t Nz = 0; // количество узлов вдоль оси z
+    int32_t L = 0;  // Количество подоблостей
+    int32_t P = 0;  // Количество видов границ
 
     vector<vector<PointXZS>> BaseGridXZ;     //  Базовая сетка в плосткости XZ
     vector<double> BaseGridY;                //  Базовая сетка по Y
@@ -107,6 +107,25 @@ struct BaseGrid3DStreightQuadPrismatic
     vector<vector<DivideParamS>> DivideParam; // Массив для разбиения
 
     bool isReadyToUse = false;
+    
+    /************************************************************************/
+    /* Constructors and operator= */
+    BaseGrid3DStreightQuadPrismatic() = default;
+
+    BaseGrid3DStreightQuadPrismatic(const BaseGrid3DStreightQuadPrismatic& baseGrid_)
+    {
+        this->BaseGridXZ = baseGrid_.BaseGridXZ;
+        this->BaseGridY = baseGrid_.BaseGridY;
+        this->BoundsArea = baseGrid_.BoundsArea;
+        this->CalculationArea = baseGrid_.CalculationArea;
+        this->CountOfDivision = baseGrid_.CountOfDivision;
+        this->DivideParam = baseGrid_.DivideParam;
+        this->isReadyToUse = baseGrid_.isReadyToUse;
+        this->L = baseGrid_.L;
+        this->Nx = baseGrid_.Nx;
+        this->Ny = baseGrid_.Ny;
+        this->Nz = baseGrid_.Nz;
+    }
 
     BaseGrid3DStreightQuadPrismatic& operator=(const BaseGrid3DStreightQuadPrismatic& baseGrid_)
     {
@@ -123,6 +142,13 @@ struct BaseGrid3DStreightQuadPrismatic
         this->Nz = baseGrid_.Nz;
         return *this;
     }
+
+    BaseGrid3DStreightQuadPrismatic(BaseGrid3DStreightQuadPrismatic&) = delete;
+    BaseGrid3DStreightQuadPrismatic(BaseGrid3DStreightQuadPrismatic&&) = delete;
+    BaseGrid3DStreightQuadPrismatic& operator=(BaseGrid3DStreightQuadPrismatic&&) = delete;
+    /************************************************************************/
+
+    ~BaseGrid3DStreightQuadPrismatic() = default;
 };
 
 // Геометрическая точка или узел конечного элемента
@@ -241,7 +267,7 @@ private:
         @return int: Величина скачка в сетке
         @result: Вернет число соответсвующее стартовой позиции по сути это скачок
     */
-    int Getlevel(int i, int axis) const noexcept;
+    int Getlevel(int32_t i, int32_t axis) const noexcept;
 
     /**************************************************************/
 
@@ -307,8 +333,8 @@ public:
         @return: BaseGrid3DStreightQuadPrismatic
         @result: -
     */
-    BaseGrid3DStreightQuadPrismatic GetBaseGrid() const noexcept;
-
+    inline BaseGrid3DStreightQuadPrismatic GetBaseGrid() const noexcept  { return baseGrid; }
+    
     /*
         @param: int idx - Индекс центральной точки в глобальной нумерации
         @return: FEM_StreightQuadPrismatic - Структура содержащая всю необходимую информацию о конечном элементе

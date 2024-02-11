@@ -51,7 +51,7 @@ public:
     @return: BaseGridXD
     @result: -
     */
-    virtual BaseGridXD GetBaseGrid() const noexcept = 0;
+    inline virtual BaseGridXD GetBaseGrid() const noexcept = 0;
 
     /*
     @param: int idx - Индекс центральной точки в глобальной нумерации

@@ -4,14 +4,14 @@
 /* Private section */
 void Grid3D_StreightQuadPrismatic::GetTotalNumberOfNodes() noexcept
 {
-    for (int i = 0; i < baseGrid.Nx - 1; i++)
-        GlobalNx += baseGrid.DivideParam[0][i].num;
+    for (int32_t i = 0; i < baseGrid.Nx - 1; i++)
+        GlobalNx += baseGrid.DivideParam[0][(uint64_t)i].num;
 
-    for (int i = 0; i < baseGrid.Nz - 1; i++)
-        GlobalNz += baseGrid.DivideParam[1][i].num;
+    for (int32_t i = 0; i < baseGrid.Nz - 1; i++)
+        GlobalNz += baseGrid.DivideParam[1][(uint64_t)i].num;
 
-    for (int i = 0; i < baseGrid.Ny - 1; i++)
-        GlobalNy += baseGrid.DivideParam[2][i].num;
+    for (int32_t i = 0; i < baseGrid.Ny - 1; i++)
+        GlobalNy += baseGrid.DivideParam[2][(uint64_t)i].num;
 
     FEMCount = GlobalNx * GlobalNy * GlobalNz;
     GlobalNx++;
@@ -32,11 +32,11 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds(GridStatus &status) noe
 {
 }
 
-int Grid3D_StreightQuadPrismatic::Getlevel(int i, int axis) const noexcept
+int Grid3D_StreightQuadPrismatic::Getlevel(int32_t i, int32_t axis) const noexcept
 {
-    int res = 0;
-    for (int k = 0; k < i; k++)
-        res += baseGrid.DivideParam[axis][k].num;
+    int32_t res = 0;
+    for (int32_t k = 0; k < i; k++)
+        res += baseGrid.DivideParam[(uint64_t)axis][(uint64_t)k].num;
     return res;
 }
 
@@ -76,64 +76,65 @@ Grid3D_StreightQuadPrismatic::Grid3D_StreightQuadPrismatic(const BaseGrid3DStrei
         }
         /* Базовая сетка по XZ */
         fin >> baseGrid.Nx >> baseGrid.Nz;
-        baseGrid.BaseGridXZ = vector(baseGrid.Nz, vector<BaseGrid3DStreightQuadPrismatic::PointXZS>(baseGrid.Nx));
-        for (int i = 0; i < baseGrid.Nz; i++)
+        baseGrid.BaseGridXZ = vector(static_cast<uint64_t>(baseGrid.Nz), vector<BaseGrid3DStreightQuadPrismatic::PointXZS>(static_cast<uint64_t>(baseGrid.Nx)));
+        for (int32_t i = 0; i < baseGrid.Nz; i++)
         {
-            for (int j = 0; j < baseGrid.Nx; j++)
+            for (int32_t j = 0; j < baseGrid.Nx; j++)
             {
-                fin >> baseGrid.BaseGridXZ[i][j].x >> baseGrid.BaseGridXZ[i][j].z;
+                fin >> baseGrid.BaseGridXZ[static_cast<uint64_t>(i)][static_cast<uint64_t>(j)].x 
+                >> baseGrid.BaseGridXZ[static_cast<uint64_t>(i)][static_cast<uint64_t>(j)].z;
             }
         }
         /***********************/
 
         /* Базовая сетка по Y */
         fin >> baseGrid.Ny;
-        baseGrid.BaseGridY = vector<double>(baseGrid.Ny);
-        for (int i = 0; i < baseGrid.Ny; i++)
-            fin >> baseGrid.BaseGridY[i];
+        baseGrid.BaseGridY = vector<double>(static_cast<uint64_t>(baseGrid.Ny));
+        for (int32_t i = 0; i < baseGrid.Ny; i++)
+            fin >> baseGrid.BaseGridY[static_cast<uint64_t>(i)];
         /***********************/
 
         /* Расчетные подобласти */
         fin >> baseGrid.L;
-        baseGrid.CalculationArea = vector(baseGrid.L, vector<int>(baseGrid.SizeOfCalculationAreaElemet));
+        baseGrid.CalculationArea = vector(static_cast<uint64_t>(baseGrid.L), vector<int32_t>(static_cast<uint64_t>(baseGrid.SizeOfCalculationAreaElemet)));
 
-        for (int i = 0; i < baseGrid.L; i++)
+        for (int32_t i = 0; i < baseGrid.L; i++)
         {
-            for (int j = 0; j < baseGrid.SizeOfCalculationAreaElemet; j++)
+            for (int32_t j = 0; j < baseGrid.SizeOfCalculationAreaElemet; j++)
             {
-                fin >> baseGrid.CalculationArea[i][j];
-                baseGrid.CalculationArea[i][j]--; // приведение нумераии с нуля
+                fin >> baseGrid.CalculationArea[static_cast<uint64_t>(i)][static_cast<uint64_t>(j)];
+                baseGrid.CalculationArea[static_cast<uint64_t>(i)][static_cast<uint64_t>(j)]--; // приведение нумераии с нуля
             }
         }
         /***********************/
 
         /* Описание Границ */
         fin >> baseGrid.P;
-        baseGrid.BoundsArea = vector(baseGrid.P, vector<int>(baseGrid.SizeOfBoundsAreaElement));
-        for (int i = 0; i < baseGrid.P; i++)
+        baseGrid.BoundsArea = vector(static_cast<uint64_t>(baseGrid.P), vector<int32_t>(static_cast<uint64_t>(baseGrid.SizeOfBoundsAreaElement)));
+        for (int32_t i = 0; i < baseGrid.P; i++)
         {
-            for (int j = 0; j < baseGrid.SizeOfBoundsAreaElement; j++)
+            for (int32_t j = 0; j < baseGrid.SizeOfBoundsAreaElement; j++)
             {
-                fin >> baseGrid.BoundsArea[i][j];
-                baseGrid.BoundsArea[i][j]--; // приведение нумераии с нуля
+                fin >> baseGrid.BoundsArea[static_cast<uint64_t>(i)][static_cast<uint64_t>(j)];
+                baseGrid.BoundsArea[static_cast<uint64_t>(i)][static_cast<uint64_t>(j)]--; // приведение нумераии с нуля
             }
         }
         /***********************/
 
         /* Правила дробления базовой сетки */
-        baseGrid.DivideParam.resize(baseGrid.SizeOfDivideParam);
-        baseGrid.DivideParam[0].resize(baseGrid.Nx - 1);
-        baseGrid.DivideParam[1].resize(baseGrid.Nz - 1);
-        baseGrid.DivideParam[2].resize(baseGrid.Ny - 1);
+        baseGrid.DivideParam.resize(static_cast<uint64_t>(baseGrid.SizeOfDivideParam));
+        baseGrid.DivideParam[0].resize(static_cast<uint64_t>(baseGrid.Nx - 1));
+        baseGrid.DivideParam[1].resize(static_cast<uint64_t>(baseGrid.Nz - 1));
+        baseGrid.DivideParam[2].resize(static_cast<uint64_t>(baseGrid.Ny - 1));
 
-        for (int i = 0; i < baseGrid.Nx - 1; i++)
-            fin >> baseGrid.DivideParam[0][i].num >> baseGrid.DivideParam[0][i].coef;
+        for (int32_t i = 0; i < baseGrid.Nx - 1; i++)
+            fin >> baseGrid.DivideParam[0][static_cast<uint64_t>(i)].num >> baseGrid.DivideParam[0][static_cast<uint64_t>(i)].coef;
 
-        for (int i = 0; i < baseGrid.Nz - 1; i++)
-            fin >> baseGrid.DivideParam[1][i].num >> baseGrid.DivideParam[1][i].coef;
+        for (int32_t i = 0; i < baseGrid.Nz - 1; i++)
+            fin >> baseGrid.DivideParam[1][static_cast<uint64_t>(i)].num >> baseGrid.DivideParam[1][static_cast<uint64_t>(i)].coef;
 
-        for (int i = 0; i < baseGrid.Ny - 1; i++)
-            fin >> baseGrid.DivideParam[2][i].num >> baseGrid.DivideParam[2][i].coef;
+        for (int32_t i = 0; i < baseGrid.Ny - 1; i++)
+            fin >> baseGrid.DivideParam[2][static_cast<uint64_t>(i)].num >> baseGrid.DivideParam[2][static_cast<uint64_t>(i)].coef;
         /***********************/
         baseGrid.isReadyToUse = true; // Структуру можно использовать она инициализированна
         fin.close();
@@ -172,11 +173,6 @@ Grid3D_StreightQuadPrismatic::Grid3D_StreightQuadPrismatic(const BaseGrid3DStrei
     return Status;
 }
 
-BaseGrid3DStreightQuadPrismatic Grid3D_StreightQuadPrismatic::GetBaseGrid() const noexcept
-{
-    return baseGrid;
-}
-
 FEM_StreightQuadPrismatic Grid3D_StreightQuadPrismatic::GetElement(const int32_t idx) const noexcept
 {
     FEM_StreightQuadPrismatic FEMElement;
@@ -185,13 +181,15 @@ FEM_StreightQuadPrismatic Grid3D_StreightQuadPrismatic::GetElement(const int32_t
 
 [[nodiscard]] GridStatus Grid3D_StreightQuadPrismatic::SetBaseGrid(const BaseGrid3DStreightQuadPrismatic &baseGrid_) noexcept
 {
+        // Если структура не валидная то выбрасываем ошибку
+    if(!baseGrid_.isReadyToUse)
+        Status.SetStatus(State::LOAD_ERROR, "Incorrect Base Grid. Call from Grid3D_StreightQuadPrismatic(const BaseGrid3DStreightQuadPrismatic &baseGrid_)");
+    else
+        baseGrid = baseGrid_;
     return Status;
 }
 
-Point &Grid3D_StreightQuadPrismatic::operator[](const int32_t idx) noexcept
-{
-    return Grid[static_cast<uint64_t>(idx)];
-}
+Point &Grid3D_StreightQuadPrismatic::operator[](const int32_t idx) noexcept { return Grid[static_cast<uint64_t>(idx)]; }
 
 FEM_StreightQuadPrismatic Grid3D_StreightQuadPrismatic::GetElement(const double x, const double y, const double z) const noexcept
 {
