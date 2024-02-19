@@ -71,14 +71,34 @@ struct BaseGrid3DStreightQuadPrismatic
     /* Структура для базовой точки  */
     struct PointXZS
     {
-        double x;
-        double z;
+        double x = 0.0;
+        double z = 0.0;
+
+        /* Копирование/присваивание */
+        PointXZS() = default;
+        PointXZS(const PointXZS&) = default;
+        PointXZS& operator=(const PointXZS&) = default;
+        PointXZS(PointXZS&&) = default;
+        PointXZS& operator=(PointXZS&&) = default;
+
+        ~PointXZS() = default;
+
     };
 
     struct DivideParamS
     {
-        int32_t num;     // количество интервалов на которое нужно разделить отрезок
-        double coef; // Коэффициент растяжения или сжатия
+        int32_t num = 0;     // количество интервалов на которое нужно разделить отрезок
+        double coef = 0; // Коэффициент растяжения или сжатия
+
+        /* Копирование/присваиваение */
+        DivideParamS() = default;
+        DivideParamS(const DivideParamS&) = default;
+        DivideParamS& operator=(const DivideParamS&) = default;
+        DivideParamS(DivideParamS&&) = default;
+        DivideParamS& operator=(DivideParamS&&) = default;
+
+        ~DivideParamS() = default;
+
     };
     int32_t Nx = 0; // количество узлов вдоль горизонатального направления
     int32_t Ny = 0; // количество узлов вдоль вертикального направления
@@ -111,6 +131,8 @@ struct BaseGrid3DStreightQuadPrismatic
     /************************************************************************/
     /* Constructors and operator= */
     BaseGrid3DStreightQuadPrismatic() = default;
+    BaseGrid3DStreightQuadPrismatic(BaseGrid3DStreightQuadPrismatic&&) = default; // Для возврата из функции с захватом параметра 
+    BaseGrid3DStreightQuadPrismatic& operator=(BaseGrid3DStreightQuadPrismatic&&) = default; // Аналогично присваивание с захватом ресурсов 
 
     BaseGrid3DStreightQuadPrismatic(const BaseGrid3DStreightQuadPrismatic& baseGrid_)
     {
@@ -144,8 +166,7 @@ struct BaseGrid3DStreightQuadPrismatic
     }
 
     BaseGrid3DStreightQuadPrismatic(BaseGrid3DStreightQuadPrismatic&) = delete;
-    BaseGrid3DStreightQuadPrismatic(BaseGrid3DStreightQuadPrismatic&&) = delete;
-    BaseGrid3DStreightQuadPrismatic& operator=(BaseGrid3DStreightQuadPrismatic&&) = delete;
+    BaseGrid3DStreightQuadPrismatic& operator=(BaseGrid3DStreightQuadPrismatic&) = delete;
     /************************************************************************/
 
     ~BaseGrid3DStreightQuadPrismatic() = default;
@@ -264,7 +285,7 @@ private:
         @param:
             int i - номер
             int axis - соответсвующая ость 0 - x, 1 - z 2 - y
-        @return int: Величина скачка в сетке
+        @return: int: Величина скачка в сетке
         @result: Вернет число соответсвующее стартовой позиции по сути это скачок
     */
     int Getlevel(int32_t i, int32_t axis) const noexcept;
@@ -357,7 +378,7 @@ public:
         @return: Point& - точка в МКЭ Области
         @result: -
     */
-    Point &operator[](const int32_t idx) noexcept;
+    inline Point &operator[](const int32_t idx) noexcept { return Grid[static_cast<uint64_t>(idx)]; }
     /**************************************************************/
 
     /*  методы специфичные для данного класса */

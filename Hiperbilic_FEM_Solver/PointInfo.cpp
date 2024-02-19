@@ -141,8 +141,13 @@ BoundInfo InfoManeger::GetBoundInfo(const Info &info)
 
     for (int32_t i = 0; i <= Bnum - 1; i++)
     {
-        Bound.Cond[i] = static_cast<int8_t>((info.BoundInfo & (Comand::GetBoundInfoBaseComand << (uint32_t)i * Comand::BaseBoundShift)) >> (uint32_t)i * Comand::BaseBoundShift);
-        Bound.TypeCond[i] = static_cast<int8_t>((info.TypeBoundCond & (Comand::GetTypeBoundBaseComand << (uint32_t)i * Comand::BaseTypeBoundShift)) >> (uint32_t)i * Comand::BaseTypeBoundShift);
+        Bound.Cond[i] = static_cast<int8_t>((info.BoundInfo & (Comand::GetBoundInfoBaseComand 
+                                            << static_cast<uint32_t>(i) * Comand::BaseBoundShift))
+                                            >> static_cast<uint32_t>(i) * Comand::BaseBoundShift);
+
+        Bound.TypeCond[i] = static_cast<int8_t>((info.TypeBoundCond & (Comand::GetTypeBoundBaseComand 
+                                                << static_cast<uint32_t>(i) * Comand::BaseTypeBoundShift)) 
+                                                >> static_cast<uint32_t>(i) * Comand::BaseTypeBoundShift);
     }
 
     return Bound;
@@ -155,7 +160,9 @@ AreaInfo InfoManeger::GetAreaInfo(const Info &info)
     Area.size = static_cast<int8_t>(Anum);
 
     for (int32_t i = 0; i <= Anum - 1; i++)
-        Area.Cond[i] = static_cast<int8_t>((info.AreaInfo & (Comand::GetAreaInfoBaseComand << Comand::BaseAreaShift * (uint32_t)i)) >> Comand::BaseAreaShift * (uint32_t)i);
+        Area.Cond[i] = static_cast<int8_t>((info.AreaInfo & (Comand::GetAreaInfoBaseComand 
+                                            << Comand::BaseAreaShift * static_cast<uint32_t>(i)))
+                                            >> Comand::BaseAreaShift * static_cast<uint32_t>(i));
 
     return Area;
 }
@@ -173,13 +180,14 @@ void InfoManeger::PrintInfo(const Info &info)
 void InfoManeger::PrintBoundInfo(const BoundInfo &Bound)
 {
     std::cout << "\nBound Info\n";
-    for (int i = 0; i < Bound.size; i++)
-        std::cout << "K = " << i + 1 << " Num formula: " << (uint32_t)Bound.Cond[i] << " Type Bound: " << (uint32_t)Bound.TypeCond[i] << "\n";
+    for (int32_t i = 0; i < Bound.size; i++)
+        std::cout << "K = " << i + 1 << " Num formula: " << static_cast<uint32_t>(Bound.Cond[i]) 
+                  << " Type Bound: " << static_cast<uint32_t>(Bound.TypeCond[i]) << "\n";
 }
 
 void InfoManeger::PrintAreaInfo(const AreaInfo &Area)
 {
     std::cout << "\nArea Info\n";
-    for (int i = 0; i < Area.size; i++)
-        std::cout << "K = " << i + 1 << " Num formula: " << (uint32_t)Area.Cond[i] << "\n";
+    for (int32_t i = 0; i < Area.size; i++)
+        std::cout << "K = " << i + 1 << " Num formula: " << static_cast<uint32_t>(Area.Cond[i]) << "\n";
 }

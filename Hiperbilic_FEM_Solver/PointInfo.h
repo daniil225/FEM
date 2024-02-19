@@ -61,6 +61,14 @@ struct Info
     uint64_t AreaInfo : 32;     /* Информация об области определяющей параметры ДУ */
     uint64_t BoundInfo : 16;    /*Краевые условия просто набор формул */
     uint64_t TypeBoundCond : 8; /* Тип Краевого условия */
+
+    Info() 
+    {
+        BaseInfo &= Comand::BaseInfoClear;
+        AreaInfo &= Comand::AreaInfoClear;
+        BoundInfo &= Comand::BoundInfoClear;
+        TypeBoundCond &= Comand::TypeBoundCondClear;
+    }
 };
 
 class InfoManeger

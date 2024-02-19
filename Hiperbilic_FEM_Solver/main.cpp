@@ -5,7 +5,6 @@
 int main()
 {
     Info info1;
-    InfoManeger::ClearInfo(info1);
 
     InfoManeger::SetFictitious(info1, 1);
     InfoManeger::SetAreaInfo(info1, 3);
