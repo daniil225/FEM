@@ -288,7 +288,7 @@ private:
         @return: int: Величина скачка в сетке
         @result: Вернет число соответсвующее стартовой позиции по сути это скачок
     */
-    int Getlevel(int32_t i, int32_t axis) const noexcept;
+    int32_t Getlevel(int32_t i, int32_t axis) const noexcept;
 
     /**************************************************************/
 
