@@ -4,6 +4,9 @@
 #include <cmath>
 #include <functional>
 
+/* C lib */
+#include <stdlib.h>
+
 /* Private section */
 void Grid3D_StreightQuadPrismatic::GetTotalNumberOfNodes() noexcept
 {
@@ -23,7 +26,7 @@ void Grid3D_StreightQuadPrismatic::GetTotalNumberOfNodes() noexcept
     Dim = GlobalNx * GlobalNy * GlobalNz;
 }
 
-void Grid3D_StreightQuadPrismatic::GenerateBaseGrid(GridStatus &status) noexcept
+void Grid3D_StreightQuadPrismatic::GenerateBaseGrid() noexcept
 {
 
     /* Вспомогальельная структура для определения параметров разбиения */
@@ -94,20 +97,20 @@ void Grid3D_StreightQuadPrismatic::GenerateBaseGrid(GridStatus &status) noexcept
     std::function<void(SettingForDivide &, double, double, vector<double> &, int &idx)> GenerateDivide =
         [](SettingForDivide &param, double left, double right, vector<double> &Line, int &idx) -> void
     {
-        int num = param.num;
+        int32_t num = param.num;
         double coef = param.coef;
         double step = param.step;
 
-        Line[idx] = left;
+        Line[static_cast<uint64_t>(idx)] = left;
         idx++;
         double ak = left;
-        for (int k = 0; k < num - 1; k++)
+        for (int32_t k = 0; k < num - 1; k++)
         {
             ak = ak + step * std::pow(coef, k);
-            Line[idx] = ak;
+            Line[static_cast<uint64_t>(idx)] = ak;
             idx++;
         }
-        Line[idx] = right;
+        Line[static_cast<uint64_t>(idx)] = right;
     };
 
     try
@@ -121,13 +124,14 @@ void Grid3D_StreightQuadPrismatic::GenerateBaseGrid(GridStatus &status) noexcept
         int32_t Ny = baseGrid.Ny;
         int32_t Nz = baseGrid.Nz;
         vector<vector<BaseGrid3DStreightQuadPrismatic::PointXZS>> &BaseGridXZ = baseGrid.BaseGridXZ;
+        vector<double> &BaseGridY = baseGrid.BaseGridY;
 
         /* Глобальные размеры есть */
 
         /* разбиения покоординатные */
-        vector<double> LineX(GlobalNx); // Массив элементов в строке по Х
-        vector<double> LineZ(GlobalNz); // Массив элементов в строке по Z
-        vector<double> LineY(GlobalNy); // Массив элементов в строке по Y
+        vector<double> LineX(static_cast<uint64_t>(GlobalNx)); // Массив элементов в строке по Х
+        vector<double> LineZ(static_cast<uint64_t>(GlobalNz)); // Массив элементов в строке по Z
+        vector<double> LineY(static_cast<uint64_t>(GlobalNy)); // Массив элементов в строке по Y
                                         /**********************************************************************/
 
         /* Блок генерации разбиения */
@@ -145,8 +149,8 @@ void Grid3D_StreightQuadPrismatic::GenerateBaseGrid(GridStatus &status) noexcept
 
             for (int32_t j = 0; j < Nx - 1; j++)
             {
-                double left = baseGrid.BaseGridXZ[static_cast<uint64_t>(i)][static_cast<uint64_t>(j)].x;
-                double right = baseGrid.BaseGridXZ[static_cast<uint64_t>(i)][static_cast<uint64_t>(j + 1)].x;
+                double left = BaseGridXZ[static_cast<uint64_t>(i)][static_cast<uint64_t>(j)].x;
+                double right = BaseGridXZ[static_cast<uint64_t>(i)][static_cast<uint64_t>(j + 1)].x;
                 SettingForDivide param = CalcSettingForDivide(0, j, left, right);
                 GenerateDivide(param, left, right, LineX, idx);
             }
@@ -164,8 +168,8 @@ void Grid3D_StreightQuadPrismatic::GenerateBaseGrid(GridStatus &status) noexcept
             int32_t idx = 0;
             for (int32_t j = 0; j < Nz - 1; j++)
             {
-                double left = baseGrid.BaseGridXZ[static_cast<uint64_t>(j)][static_cast<uint64_t>(i)].z;
-                double right = baseGrid.BaseGridXZ[static_cast<uint64_t>(j + 1)][static_cast<uint64_t>(i)].z;
+                double left = BaseGridXZ[static_cast<uint64_t>(j)][static_cast<uint64_t>(i)].z;
+                double right = BaseGridXZ[static_cast<uint64_t>(j + 1)][static_cast<uint64_t>(i)].z;
                 SettingForDivide param = CalcSettingForDivide(1, j, left, right);
                 GenerateDivide(param, left, right, LineZ, idx);
             }
@@ -217,8 +221,8 @@ void Grid3D_StreightQuadPrismatic::GenerateBaseGrid(GridStatus &status) noexcept
         int32_t idxY = 0;
         for (int32_t i = 0; i < Ny - 1; i++)
         {
-            double left = baseGrid.BaseGridY[static_cast<uint64_t>(i)];
-            double right = baseGrid.BaseGridY[static_cast<uint64_t>(i + 1)];
+            double left = BaseGridY[static_cast<uint64_t>(i)];
+            double right = BaseGridY[static_cast<uint64_t>(i + 1)];
             SettingForDivide param = CalcSettingForDivide(2, i, left, right);
             GenerateDivide(param, left, right, LineY, idxY);
         }
@@ -270,7 +274,7 @@ void Grid3D_StreightQuadPrismatic::GenerateBaseGrid(GridStatus &status) noexcept
     }
 }
 
-void Grid3D_StreightQuadPrismatic::DivisionIntoSubAreas(GridStatus &status) noexcept
+void Grid3D_StreightQuadPrismatic::DivisionIntoSubAreas() noexcept
 {
 
     /* Вспомогальельная структура для определения параметров границы */
@@ -312,7 +316,7 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubAreas(GridStatus &status) noex
             /* XZ */
 
             int32_t leftStartX = Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][1], 0) + GlobalNx * Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][3], 1);
-            int32_t leftEndX = Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][1], 0) + GlobalNx * Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][4], 1);
+            //int32_t leftEndX = Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][1], 0) + GlobalNx * Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][4], 1);
             int32_t rightStartX = Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][2], 0) + GlobalNx * Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][3], 1);
             int32_t rightEndX = Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][2], 0) + GlobalNx * Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][4], 1);
 
@@ -320,9 +324,9 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubAreas(GridStatus &status) noex
             int32_t nZ = (rightStartX - leftStartX);
 
             int32_t idxBoundGrid = 0;
-            for (int32_t i = 0; i <= nX; i++)
+            for (int32_t k = 0; k <= nX; k++)
             {
-                int32_t Idx = leftStartX + i * GlobalNx;
+                int32_t Idx = leftStartX + k * GlobalNx;
                 for (int32_t j = 0; j <= nZ; j++)
                 {
                     BoundGrid[static_cast<uint64_t>(idxBoundGrid)] = Idx;
@@ -333,8 +337,8 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubAreas(GridStatus &status) noex
 
             /* Y */
             /* В силу линейности по оси можно взять только первое и последнее значение */
-            Bound.StartY = baseGrid.BaseGridY[baseGrid.CalculationArea[static_cast<uint64_t>(i)][5]];
-            Bound.EndY = baseGrid.BaseGridY[baseGrid.CalculationArea[static_cast<uint64_t>(i)][6]];
+            Bound.StartY = baseGrid.BaseGridY[static_cast<uint64_t>(baseGrid.CalculationArea[static_cast<uint64_t>(i)][5])];
+            Bound.EndY = baseGrid.BaseGridY[static_cast<uint64_t>(baseGrid.CalculationArea[static_cast<uint64_t>(i)][6])];
             Bound.PlaneXZSize = idxBoundGrid;
             Bound.PlaneXZ = BoundGrid;
 
@@ -426,13 +430,13 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubAreas(GridStatus &status) noex
             // int RightAreaBound = ;
 
             /* Этот цикл тупой он по всем элементам идет */
-            for (int j = 0; j < Dim; j++)
+            for (int32_t j = 0; j < Dim; j++)
             {
-                if (IsInArea(Bound, Grid[j], j))
+                if (IsInArea(Bound, Grid[static_cast<uint64_t>(j)], j))
                 {
                     /* Мы в заданной области устанавливаем нужные параметры */
-                    InfoManeger::SetFictitious(Grid[j].info, 1);
-                    InfoManeger::SetAreaInfo(Grid[j].info, Bound.AreaNum);
+                    InfoManeger::SetFictitious(Grid[static_cast<uint64_t>(j)].info, 1);
+                    InfoManeger::SetAreaInfo(Grid[static_cast<uint64_t>(j)].info, static_cast<uint32_t>(Bound.AreaNum));
                 }
             }
         }
@@ -450,7 +454,7 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubAreas(GridStatus &status) noex
     }
 }
 
-void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds(GridStatus &status) noexcept
+void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds() noexcept
 {
     /* Вспомогальельная структура для определения параметров границы */
     struct Bound
@@ -516,7 +520,7 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds(GridStatus &status) noe
     try
     {
         std::pair<int, int> max2 = GetMaxPair(GlobalNx, GlobalNz, GlobalNy);
-        vector<int32_t> MemoryPool(max2.first * max2.second);
+        vector<int32_t> MemoryPool(static_cast<uint64_t>(max2.first * max2.second));
         /* Краевые условия задаются практически так же как и области с тем лишь исключением, что одна из координат фиксируется */
         std::function<Bound(int32_t)> GetBound = [&](int32_t i) -> Bound
         {
@@ -534,7 +538,7 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds(GridStatus &status) noe
 
                 /* Определяем границы областей */
                 int32_t leftStartX = Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][2], 0) + GlobalNx * Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][4], 1);
-                int32_t leftEndX = Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][2], 0) + GlobalNx * Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][5], 1);
+                //int32_t leftEndX = Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][2], 0) + GlobalNx * Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][5], 1);
                 int32_t rightStartX = Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][3], 0) + GlobalNx * Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][4], 1);
                 int32_t rightEndX = Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][3], 0) + GlobalNx * Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][5], 1);
 
@@ -543,9 +547,9 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds(GridStatus &status) noe
                 int32_t nZ = (rightStartX - leftStartX);
 
                 int32_t idxBoundGrid = 0;
-                for (int32_t i = 0; i <= nX; i++)
+                for (int32_t k = 0; k <= nX; k++)
                 {
-                    int32_t Idx = leftStartX + i * GlobalNx + startBaseIdx; // Смещенный индекс
+                    int32_t Idx = leftStartX + k * GlobalNx + startBaseIdx; // Смещенный индекс
                     for (int32_t j = 0; j <= nZ; j++)
                     {
                         MemoryPool[static_cast<uint64_t>(idxBoundGrid)] = Idx;
@@ -571,9 +575,9 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds(GridStatus &status) noe
                 int32_t nY = (EndPositionY - StartPositionY) / (GlobalNx * GlobalNz); // Количество шагов для Y
 
                 int32_t idxBoundGrid = 0;
-                for (int32_t i = 0; i <= nY; i++)
+                for (int32_t k = 0; k <= nY; k++)
                 {
-                    int32_t Idx = StartPositionY + i * GlobalNx * GlobalNz;
+                    int32_t Idx = StartPositionY + k * GlobalNx * GlobalNz;
                     for (int32_t j = 0; j <= nZ; j++)
                     {
                         MemoryPool[static_cast<uint64_t>(idxBoundGrid)] = Idx;
@@ -598,9 +602,9 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds(GridStatus &status) noe
                 int32_t nY = (EndPositionY - StartPositionY) / (GlobalNx * GlobalNz); // Количество шагов для Y
 
                 int32_t idxBoundGrid = 0;
-                for (int32_t i = 0; i <= nY; i++)
+                for (int32_t k = 0; k <= nY; k++)
                 {
-                    int32_t Idx = StartPositionY + StartPositionX + i * GlobalNx * GlobalNz;
+                    int32_t Idx = StartPositionY + StartPositionX + k * GlobalNx * GlobalNz;
                     for (int32_t j = 0; j <= nX; j++)
                     {
                         MemoryPool[static_cast<uint64_t>(idxBoundGrid)] = Idx;
@@ -626,7 +630,7 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds(GridStatus &status) noe
                 if (IsInBound(bound, j))
                 {
                     /* Мы в заданной области устанавливаем нужные параметры */
-                    InfoManeger::SetBoundInfo(Grid[j].info, bound.BoundFormula, bound.BoundType + 1);
+                    InfoManeger::SetBoundInfo(Grid[static_cast<uint64_t>(j)].info, static_cast<uint32_t>(bound.BoundFormula), static_cast<uint32_t>(bound.BoundType + 1));
                 }
             }
         }
@@ -776,25 +780,25 @@ Grid3D_StreightQuadPrismatic::Grid3D_StreightQuadPrismatic(const BaseGrid3DStrei
 
     // Генерация базовой сетки
     if (Status.GetState() == State::OK)
-        GenerateBaseGrid(Status);
+        GenerateBaseGrid();
     else
         return Status;
     // Учет фиктивных узлов
     if (Status.GetState() == State::OK)
-        DivisionIntoSubAreas(Status);
+        DivisionIntoSubAreas();
     else
         return Status;
 
     // Учет КУ и расстановка границ
     if (Status.GetState() == State::OK)
-        DivisionIntoSubBounds(Status);
+        DivisionIntoSubBounds();
     else
         return Status;
 
     return Status;
 }
 
-[[nodiscard]] GridStatus Grid3D_StreightQuadPrismatic::DivideGrid(const int coef) noexcept
+[[nodiscard]] GridStatus Grid3D_StreightQuadPrismatic::DivideGrid(const int32_t coef) noexcept
 {
     return Status;
 }
@@ -824,4 +828,36 @@ FEM_StreightQuadPrismatic Grid3D_StreightQuadPrismatic::GetElement(const double 
 {
     FEM_StreightQuadPrismatic FEMElement;
     return FEMElement;
+}
+
+/* Friend Functions + вспомогательные функции для некоторых нужд */
+ostream& operator<<(ostream &os, Grid3D_Size &Grid3D_Size_param)
+{
+    os << "Grid3D_Size parametrs:\n";
+    os << "Dim = " << Grid3D_Size_param.Dim << "\n";
+    os << "FEMCount = " << Grid3D_Size_param.FEMCount << "\n";
+    os << "GlobalNx = " << Grid3D_Size_param.GlobalNx << "\n";
+    os << "GlobalNy = " << Grid3D_Size_param.GlobalNy << "\n";
+    os << "GlobalNz = " << Grid3D_Size_param.GlobalNz << "\n";
+    os << "\n";
+
+    return os;
+}
+
+void Grid3D_StreightQuadPrismatic::PrintGridSlice(int32_t level) const
+{
+    uint64_t idx = static_cast<uint64_t>(level*GlobalNx*GlobalNz);
+    cout << "Start idx: " << idx << "  End idx: " << idx + static_cast<uint64_t>(GlobalNx * GlobalNz - 1) << " Step Row: " << GlobalNx << "\n";
+    cout << "Format = (x,z)\n";
+    cout << "y = " << Grid[idx].y << "\n";
+    for (int32_t i = 0; i < GlobalNz; i++)
+		{
+			for (int32_t j = 0; j < GlobalNx; j++)
+			{
+				//cout << fixed << std::setprecision(2) << "(" << grid.Grid[idx].x << ";" << grid.Grid[idx].z << ";" << grid.Grid[idx].y << ") ";
+				printf("(%.2f;%.2f)",Grid[idx].x, Grid[idx].z);
+                idx++;
+			}
+			cout << "\n";
+		}
 }

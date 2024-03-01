@@ -1,23 +1,29 @@
 #include <iostream>
-#include "PointInfo.h"
-
+#include "Grid3D_StreightQuadPrismatic.h"
 
 int main()
 {
-    Info info1;
 
-    InfoManeger::SetFictitious(info1, 1);
-    InfoManeger::SetAreaInfo(info1, 3);
-    InfoManeger::SetAreaInfo(info1, 1);
-    InfoManeger::SetAreaInfo(info1, 2);
-    InfoManeger::SetAreaInfo(info1, 1);
+    Grid3D_StreightQuadPrismatic Grid;
 
-    InfoManeger::SetBoundInfo(info1, 1, 1);
-    InfoManeger::SetBoundInfo(info1, 2, 3);
-    InfoManeger::SetBoundInfo(info1, 1, 1);
-
-    InfoManeger::PrintInfo(info1);
-
+    GridStatus Status = Grid.Load("Area1.txt");
+    if(Status.GetState() == State::OK)
+    {
+        Status = Grid.GenerateGrid();
+        if(Status.GetState() == State::OK)
+        {
+            //Grid3D_Size GridSize = Grid.GetGridSize();
+            Grid.PrintGridSlice(1);
+        }
+        else
+        {
+            cout << Status.GetMsg();
+        }
+    }
+    else
+    {
+        cout << Status.GetMsg();
+    }
    
     return 0;
 }

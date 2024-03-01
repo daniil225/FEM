@@ -185,6 +185,18 @@ struct Point
     double z = 0.0;
 };
 
+// Структура содержащая количество точек на каждой из координатных линий + общая размерность + количество конечных элементов
+struct Grid3D_Size
+{
+    int32_t Dim = 0;      // Размерность сетки(количество узлов) и СЛАУ в то же время
+    int32_t FEMCount = 0; // Количество конечных элементов
+    int32_t GlobalNx = 0; // Сумарное количество узлов по оси Х
+    int32_t GlobalNy = 0; // Сумарное количество узлов по оси У
+    int32_t GlobalNz = 0; // Сумарное количество узлов по оси Z
+
+    friend ostream& operator<<(ostream &os, Grid3D_Size &Grid3D_Size_param);
+};
+
 // Конечный элемент
 struct FEM_StreightQuadPrismatic
 {
@@ -261,25 +273,26 @@ private:
     void GetTotalNumberOfNodes() noexcept;
 
     /*
-        @param: GridStatus &status
+        @param: void
         @return: void
         @result:Генерация всей расчетной области без учетка фиктивных элементов и принадлежности к какой либо границе и расчетной области
+        
     */
-    void GenerateBaseGrid(GridStatus &status) noexcept;
+    void GenerateBaseGrid() noexcept;
 
     /*
-       @param: GridStatus &status
+       @param: void
        @return: void
        @result: Учет фиктивных узлов
    */
-    void DivisionIntoSubAreas(GridStatus &status) noexcept;
+    void DivisionIntoSubAreas() noexcept;
 
     /*
-        @param: GridStatus &status
+        @param: void
         @return: void
         @result: Функция учетка типа КУ и установка факта является ли элемент граничным
     */
-    void DivisionIntoSubBounds(GridStatus &status) noexcept;
+    void DivisionIntoSubBounds() noexcept;
 
     /*
         @param:
@@ -338,7 +351,7 @@ public:
         @warning: Производит исключительно установку новых параметров дробление. Для их применения нужно вызвать метод ReGenerateGrid()
         @note: Результат работы метода нельзя игнорировать
     */
-    [[nodiscard]] GridStatus DivideGrid(const int coef) noexcept;
+    [[nodiscard]] GridStatus DivideGrid(const int32_t coef) noexcept;
 
     /*
         @param: void
@@ -395,6 +408,19 @@ public:
     */
     FEM_StreightQuadPrismatic GetElement(const double x, const double y, const double z) const noexcept;
 
+    /*
+        @param: void
+        @return: Grid3D_Size
+    */
+    inline Grid3D_Size GetGridSize() const { return Grid3D_Size{Dim, FEMCount, GlobalNx, GlobalNy, GlobalNz}; };
+
+    /* 
+        @param: 
+            int32_t level - Номер секущей плоскости 
+        @return: void
+        @details: Вывод плоскости XZ по точкам 
+     */
+    void PrintGridSlice(int32_t level) const;
     /**************************************************************/
 
     /* Копирование/звхват объекта запрещены */

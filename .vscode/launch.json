@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/daniil/Desktop/GitHub/MathTools",
-      "program": "/home/daniil/Desktop/GitHub/MathTools/build/Debug/outDebug",
+      "cwd": "/home/daniil/Desktop/GitHub/FEM/Hiperbilic_FEM_Solver",
+      "program": "/home/daniil/Desktop/GitHub/FEM/Hiperbilic_FEM_Solver/build/Release/outRelease",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
