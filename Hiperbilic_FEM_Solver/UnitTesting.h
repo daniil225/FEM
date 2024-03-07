@@ -1,3 +1,6 @@
+#ifndef UNITTESTS_H_
+#define UNITTESTS_H_
+
 /* 
     Система предназначена для автоматического тестирования всей системы 
     
@@ -20,6 +23,15 @@
 
     !!! Полагаю в отдельном файле создать базу тестов и уже их ставить на прогон. Таким образом можно будет увеличивать базу тестов
  */
+
+/* Интерфейс для тестирования */
+class UnitTests
+{
+    private:
+    protected:
+    public:
+};
+
 
 class UnitTests_Grid3D_StreightQuadPrismatic
 {
@@ -93,3 +105,5 @@ class UnitTests_HyperbolicEquationSolver
 
 };
 
+
+#endif

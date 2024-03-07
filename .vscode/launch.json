@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/daniil/Desktop/GitHub/FEM/Hiperbilic_FEM_Solver",
-      "program": "/home/daniil/Desktop/GitHub/FEM/Hiperbilic_FEM_Solver/build/Release/outRelease",
+      "cwd": "/home/daniil/Desktop/GitHub/FEM/Eleptic_eq_solver",
+      "program": "/home/daniil/Desktop/GitHub/FEM/Eleptic_eq_solver/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

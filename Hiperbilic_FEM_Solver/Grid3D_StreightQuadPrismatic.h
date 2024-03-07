@@ -310,6 +310,12 @@ public:
     /* Конструкторы объекта  */
     Grid3D_StreightQuadPrismatic() = default;
 
+    /* Передача по ссылке разрешена но объект нельзя изменять */
+    Grid3D_StreightQuadPrismatic(const Grid3D_StreightQuadPrismatic &) = default;
+
+    /* Передача по сслке изменения разрешены */
+    Grid3D_StreightQuadPrismatic(Grid3D_StreightQuadPrismatic &) = delete;
+    
     /*
         @param: const string &filename - - Текстовый файл с разметкой
         @return: Constructed Object Grid3D_StreightQuadPrismatic
@@ -424,8 +430,6 @@ public:
     /**************************************************************/
 
     /* Копирование/звхват объекта запрещены */
-    Grid3D_StreightQuadPrismatic(const Grid3D_StreightQuadPrismatic &) = delete;
-    Grid3D_StreightQuadPrismatic(Grid3D_StreightQuadPrismatic &) = delete;
     Grid3D_StreightQuadPrismatic(Grid3D_StreightQuadPrismatic &&) = delete;
     Grid3D_StreightQuadPrismatic &operator=(const Grid3D_StreightQuadPrismatic &) = delete;
     Grid3D_StreightQuadPrismatic &operator=(Grid3D_StreightQuadPrismatic &) = delete;

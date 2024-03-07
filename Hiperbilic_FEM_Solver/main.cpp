@@ -13,7 +13,12 @@ int main()
         if(Status.GetState() == State::OK)
         {
             //Grid3D_Size GridSize = Grid.GetGridSize();
-            Grid.PrintGridSlice(1);
+            Grid.PrintGridSlice(0);
+            //InfoManeger::PrintInfo(Grid[3].info);
+            Status = Grid.DivideGrid(2);
+            Status = Grid.ReGenerateGrid();
+            if(Status.GetState() == State::OK)
+                Grid.PrintGridSlice(0);
         }
         else
         {

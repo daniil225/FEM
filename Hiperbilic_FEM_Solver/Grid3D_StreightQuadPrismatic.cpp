@@ -185,6 +185,41 @@ void Grid3D_StreightQuadPrismatic::GenerateBaseGrid() noexcept
         }
 
         /************************************************************************/
+        /*
+					Кратко Алгоритм:
+					Работаем с осью Z соответственно индексация будет происходить по этой оси
+					в цикле идем по всем столбцам массива сетки
+
+					Нужно получить левую и правую границу на каждом интервале
+					Сформировать массив отрезков по  данной координате
+					Занести полученный массив в Глобальную сетку
+				*/
+				/* Цикл по всем горизонтальным линиям */
+				for (int32_t i = 0; i < GlobalNx; i++)
+				{
+					int32_t idx = 0;
+					/* Цикл по интеравалам оси Z */
+					for (int32_t j = 0; j < Nz - 1; j++)
+					{
+						int32_t startIdx = i + GlobalNx * Getlevel(j, 1);
+						int32_t endIdx = i + GlobalNx * Getlevel(j + 1, 1);
+						double left = Grid[static_cast<uint64_t>(startIdx)].x; // Левая граница по х
+						double right = Grid[static_cast<uint64_t>(endIdx)].x; // Правая граница по х 
+
+						// Разбиение интервала подчиняется разбиению по оси z
+						SettingForDivide param = CalcSettingForDivide(1, j, left, right);
+						GenerateDivide(param, left, right, LineZ, idx);
+					}
+					/* Занесение результата в Итоговый массив */
+
+					int32_t startIdx = i; // Стартовая позиция
+					for (int32_t k = 0; k < GlobalNz; k++)
+					{
+						Grid[static_cast<uint64_t>(startIdx)].x = LineZ[static_cast<uint64_t>(k)];
+						startIdx += GlobalNx;
+					}
+				}
+
 
         /*
             Генерация вспомогательных горизонтальных линий
@@ -800,11 +835,39 @@ Grid3D_StreightQuadPrismatic::Grid3D_StreightQuadPrismatic(const BaseGrid3DStrei
 
 [[nodiscard]] GridStatus Grid3D_StreightQuadPrismatic::DivideGrid(const int32_t coef) noexcept
 {
+    /* Для этого нужно сделать преобразование базовой сетки на заданный коэффициент и пересчитать всю сетку*/
+    for(uint64_t i = 0; i < static_cast<uint64_t>(baseGrid.Nx - 1); i++)
+    {
+        baseGrid.DivideParam[0][i].num *= coef;
+        baseGrid.DivideParam[0][i].coef = pow(baseGrid.DivideParam[0][i].coef, 1.0/(static_cast<double>(coef)));
+        std::cout << "NUM = " << baseGrid.DivideParam[0][i].num << " coef = " << baseGrid.DivideParam[0][0].coef << "\n";
+    }
+
+    for(uint64_t i = 0; i < static_cast<uint64_t>(baseGrid.Nz - 1); i++)
+    {
+        baseGrid.DivideParam[1][i].num *= coef;
+        baseGrid.DivideParam[1][i].coef = pow(baseGrid.DivideParam[1][i].coef, 1.0/(static_cast<double>(coef)));
+    }
+
+    for(uint64_t i = 0; i < static_cast<uint64_t>(baseGrid.Ny - 1); i++)
+    {
+        baseGrid.DivideParam[2][i].num *= coef;
+        baseGrid.DivideParam[2][i].coef = pow(baseGrid.DivideParam[2][i].coef, 1.0/(static_cast<double>(coef)));
+    }
+    
     return Status;
 }
 
 [[nodiscard]] GridStatus Grid3D_StreightQuadPrismatic::ReGenerateGrid() noexcept
 {
+    /* Предварительно выставляем по дефолту все параметры класса */
+    Dim = GlobalNx = GlobalNy = GlobalNz = 0;
+    Grid.clear();
+
+    /* Перегенерация сетки */
+    Status = GenerateGrid();
+    
+
     return Status;
 }
 
