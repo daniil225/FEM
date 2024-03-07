@@ -132,7 +132,7 @@ void Grid3D_StreightQuadPrismatic::GenerateBaseGrid() noexcept
         vector<double> LineX(static_cast<uint64_t>(GlobalNx)); // Массив элементов в строке по Х
         vector<double> LineZ(static_cast<uint64_t>(GlobalNz)); // Массив элементов в строке по Z
         vector<double> LineY(static_cast<uint64_t>(GlobalNy)); // Массив элементов в строке по Y
-                                        /**********************************************************************/
+                                                               /**********************************************************************/
 
         /* Блок генерации разбиения */
 
@@ -186,40 +186,39 @@ void Grid3D_StreightQuadPrismatic::GenerateBaseGrid() noexcept
 
         /************************************************************************/
         /*
-					Кратко Алгоритм:
-					Работаем с осью Z соответственно индексация будет происходить по этой оси
-					в цикле идем по всем столбцам массива сетки
+                    Кратко Алгоритм:
+                    Работаем с осью Z соответственно индексация будет происходить по этой оси
+                    в цикле идем по всем столбцам массива сетки
 
-					Нужно получить левую и правую границу на каждом интервале
-					Сформировать массив отрезков по  данной координате
-					Занести полученный массив в Глобальную сетку
-				*/
-				/* Цикл по всем горизонтальным линиям */
-				for (int32_t i = 0; i < GlobalNx; i++)
-				{
-					int32_t idx = 0;
-					/* Цикл по интеравалам оси Z */
-					for (int32_t j = 0; j < Nz - 1; j++)
-					{
-						int32_t startIdx = i + GlobalNx * Getlevel(j, 1);
-						int32_t endIdx = i + GlobalNx * Getlevel(j + 1, 1);
-						double left = Grid[static_cast<uint64_t>(startIdx)].x; // Левая граница по х
-						double right = Grid[static_cast<uint64_t>(endIdx)].x; // Правая граница по х 
+                    Нужно получить левую и правую границу на каждом интервале
+                    Сформировать массив отрезков по  данной координате
+                    Занести полученный массив в Глобальную сетку
+                */
+        /* Цикл по всем горизонтальным линиям */
+        for (int32_t i = 0; i < GlobalNx; i++)
+        {
+            int32_t idx = 0;
+            /* Цикл по интеравалам оси Z */
+            for (int32_t j = 0; j < Nz - 1; j++)
+            {
+                int32_t startIdx = i + GlobalNx * Getlevel(j, 1);
+                int32_t endIdx = i + GlobalNx * Getlevel(j + 1, 1);
+                double left = Grid[static_cast<uint64_t>(startIdx)].x; // Левая граница по х
+                double right = Grid[static_cast<uint64_t>(endIdx)].x;  // Правая граница по х
 
-						// Разбиение интервала подчиняется разбиению по оси z
-						SettingForDivide param = CalcSettingForDivide(1, j, left, right);
-						GenerateDivide(param, left, right, LineZ, idx);
-					}
-					/* Занесение результата в Итоговый массив */
+                // Разбиение интервала подчиняется разбиению по оси z
+                SettingForDivide param = CalcSettingForDivide(1, j, left, right);
+                GenerateDivide(param, left, right, LineZ, idx);
+            }
+            /* Занесение результата в Итоговый массив */
 
-					int32_t startIdx = i; // Стартовая позиция
-					for (int32_t k = 0; k < GlobalNz; k++)
-					{
-						Grid[static_cast<uint64_t>(startIdx)].x = LineZ[static_cast<uint64_t>(k)];
-						startIdx += GlobalNx;
-					}
-				}
-
+            int32_t startIdx = i; // Стартовая позиция
+            for (int32_t k = 0; k < GlobalNz; k++)
+            {
+                Grid[static_cast<uint64_t>(startIdx)].x = LineZ[static_cast<uint64_t>(k)];
+                startIdx += GlobalNx;
+            }
+        }
 
         /*
             Генерация вспомогательных горизонтальных линий
@@ -351,7 +350,7 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubAreas() noexcept
             /* XZ */
 
             int32_t leftStartX = Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][1], 0) + GlobalNx * Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][3], 1);
-            //int32_t leftEndX = Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][1], 0) + GlobalNx * Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][4], 1);
+            // int32_t leftEndX = Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][1], 0) + GlobalNx * Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][4], 1);
             int32_t rightStartX = Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][2], 0) + GlobalNx * Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][3], 1);
             int32_t rightEndX = Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][2], 0) + GlobalNx * Getlevel(baseGrid.CalculationArea[static_cast<uint64_t>(i)][4], 1);
 
@@ -559,7 +558,6 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds() noexcept
         /* Краевые условия задаются практически так же как и области с тем лишь исключением, что одна из координат фиксируется */
         std::function<Bound(int32_t)> GetBound = [&](int32_t i) -> Bound
         {
-            
             Bound bound;
             bound.BoundType = baseGrid.BoundsArea[static_cast<uint64_t>(i)][1];
             bound.BoundFormula = baseGrid.BoundsArea[static_cast<uint64_t>(i)][0];
@@ -573,7 +571,7 @@ void Grid3D_StreightQuadPrismatic::DivisionIntoSubBounds() noexcept
 
                 /* Определяем границы областей */
                 int32_t leftStartX = Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][2], 0) + GlobalNx * Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][4], 1);
-                //int32_t leftEndX = Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][2], 0) + GlobalNx * Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][5], 1);
+                // int32_t leftEndX = Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][2], 0) + GlobalNx * Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][5], 1);
                 int32_t rightStartX = Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][3], 0) + GlobalNx * Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][4], 1);
                 int32_t rightEndX = Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][3], 0) + GlobalNx * Getlevel(baseGrid.BoundsArea[static_cast<uint64_t>(i)][5], 1);
 
@@ -836,25 +834,25 @@ Grid3D_StreightQuadPrismatic::Grid3D_StreightQuadPrismatic(const BaseGrid3DStrei
 [[nodiscard]] GridStatus Grid3D_StreightQuadPrismatic::DivideGrid(const int32_t coef) noexcept
 {
     /* Для этого нужно сделать преобразование базовой сетки на заданный коэффициент и пересчитать всю сетку*/
-    for(uint64_t i = 0; i < static_cast<uint64_t>(baseGrid.Nx - 1); i++)
+
+    for (uint64_t i = 0; i < static_cast<uint64_t>(baseGrid.Nx - 1); i++)
     {
         baseGrid.DivideParam[0][i].num *= coef;
-        baseGrid.DivideParam[0][i].coef = pow(baseGrid.DivideParam[0][i].coef, 1.0/(static_cast<double>(coef)));
-        std::cout << "NUM = " << baseGrid.DivideParam[0][i].num << " coef = " << baseGrid.DivideParam[0][0].coef << "\n";
+        baseGrid.DivideParam[0][i].coef = pow(baseGrid.DivideParam[0][i].coef, 1.0 / (static_cast<double>(coef)));
     }
 
-    for(uint64_t i = 0; i < static_cast<uint64_t>(baseGrid.Nz - 1); i++)
+    for (uint64_t i = 0; i < static_cast<uint64_t>(baseGrid.Nz - 1); i++)
     {
         baseGrid.DivideParam[1][i].num *= coef;
-        baseGrid.DivideParam[1][i].coef = pow(baseGrid.DivideParam[1][i].coef, 1.0/(static_cast<double>(coef)));
+        baseGrid.DivideParam[1][i].coef = pow(baseGrid.DivideParam[1][i].coef, 1.0 / (static_cast<double>(coef)));
     }
 
-    for(uint64_t i = 0; i < static_cast<uint64_t>(baseGrid.Ny - 1); i++)
+    for (uint64_t i = 0; i < static_cast<uint64_t>(baseGrid.Ny - 1); i++)
     {
         baseGrid.DivideParam[2][i].num *= coef;
-        baseGrid.DivideParam[2][i].coef = pow(baseGrid.DivideParam[2][i].coef, 1.0/(static_cast<double>(coef)));
+        baseGrid.DivideParam[2][i].coef = pow(baseGrid.DivideParam[2][i].coef, 1.0 / (static_cast<double>(coef)));
     }
-    
+
     return Status;
 }
 
@@ -866,15 +864,227 @@ Grid3D_StreightQuadPrismatic::Grid3D_StreightQuadPrismatic(const BaseGrid3DStrei
 
     /* Перегенерация сетки */
     Status = GenerateGrid();
-    
 
     return Status;
 }
 
-FEM_StreightQuadPrismatic Grid3D_StreightQuadPrismatic::GetElement(const int32_t idx) const noexcept
+Finit_Element_StreightQuadPrismatic Grid3D_StreightQuadPrismatic::GetElement(const int32_t idx) const noexcept
 {
-    FEM_StreightQuadPrismatic FEMElement;
-    return FEMElement;
+    /* Оперделим список локальных функций вспомогательных */
+
+    /*
+        @param int32_t *arr
+        @param const int32_t size
+        @return Занууляет массив
+    */
+    auto ZeroInitArray = [](int32_t *arr, const int32_t size)
+    {
+        for (int32_t i = 0; i < size; i++)
+            arr[static_cast<uint64_t>(i)] = 0;
+    };
+
+    /*
+        @param std::pair<int32_t, int32_t>* arr
+        @param const int32_t size
+        @return Занууляет массив пар
+    */
+    auto ZeroInitArrayPair = [](std::pair<int32_t, int32_t> *arr, const int32_t size)
+    {
+        for (int32_t i = 0; i < size; i++)
+        {
+            arr[static_cast<uint64_t>(i)].first = 0;
+            arr[static_cast<uint64_t>(i)].second = 0;
+        }
+    };
+
+    /*
+        @param int32_t* arr
+        @param const int32_t size
+        @return int32_t - Возвращает индекс массива где лежит max значение
+    */
+    auto GetArgMax = [](int32_t *arr, const int32_t size) -> int32_t
+    {
+        int32_t res = -1;
+        for (int32_t i = 0; i < size; i++)
+        {
+            if (arr[static_cast<uint64_t>(i)] == 8)
+            {
+                res = i;
+                break;
+            }
+        }
+
+        return res;
+    };
+
+    /*
+        @param std::pair<int32_t, int32_t> *arr
+        @param const int32_t size
+        @return std::pair<int32_t, int32_t> - хз что тут давно писал но работает
+    */
+    auto GetArgMaxPair = [](std::pair<int32_t, int32_t> *arr, const int32_t size) -> std::pair<int32_t, int32_t>
+    {
+        std::pair<int32_t, int32_t> res = std::make_pair(-1, -1);
+        for (int32_t i = 0; i < size; i++)
+        {
+            if (arr[static_cast<uint64_t>(i)].first == 4)
+            {
+                res.first = i;
+                res.second = arr[i].second;
+                break;
+            }
+        }
+
+        return res;
+    };
+
+    int32_t Nx = GlobalNx;
+    int32_t Ny = GlobalNy;
+    int32_t Nz = GlobalNz;
+
+    /*
+        @param int32_t idx - Индекс конечного элемента
+        @return int32_t\\
+        @return  Вернет по номеру конечного элемента значение его праой нижней границе (локальный номер 1)
+    */
+    auto K = [Nx, Ny, Nz](int32_t _idx) -> int32_t
+    {
+        int32_t shiftXZ = 0;
+        int32_t projidx = _idx % (((Nx - 1) * (Nz - 1)));
+        if (projidx < Nx - 1)
+        {
+            shiftXZ = projidx;
+        }
+        else
+        {
+            int32_t level = static_cast<int32_t>(std::floor(projidx / (Nx - 1)));
+            int32_t start = level * Nx;
+            int32_t shift = projidx - (Nx - 1) * level;
+            shiftXZ = start + shift;
+        }
+
+        int32_t levelY = static_cast<int32_t>(std::floor((_idx) / ((Nx - 1) * (Nz - 1))));
+        int32_t shiftY = levelY * Nx * Nz;
+        return shiftY + shiftXZ;
+    };
+
+    Finit_Element_StreightQuadPrismatic FinitElement;
+    /* Расчет глобальных индексов */
+    FinitElement.GlobalIdx[0] = K(idx);
+    FinitElement.GlobalIdx[1] = FinitElement.GlobalIdx[0] + 1;
+    FinitElement.GlobalIdx[2] = FinitElement.GlobalIdx[0] + Nx;
+    FinitElement.GlobalIdx[3] = FinitElement.GlobalIdx[1] + Nx;
+
+    FinitElement.GlobalIdx[4] = FinitElement.GlobalIdx[0] + Nx * Nz;
+    FinitElement.GlobalIdx[5] = FinitElement.GlobalIdx[4] + 1;
+    FinitElement.GlobalIdx[6] = FinitElement.GlobalIdx[4] + Nx;
+    FinitElement.GlobalIdx[7] = FinitElement.GlobalIdx[5] + Nx;
+
+    for (int32_t i = 0; i < FinitElement.FinitElementSize; i++)
+    {
+        FinitElement.e[static_cast<uint64_t>(i)] = Grid[static_cast<uint64_t>(FinitElement.GlobalIdx[static_cast<uint64_t>(i)])];
+
+        /* Проверим сразу на фиктивность  */
+        if (!InfoManeger::IsFiFictitious(FinitElement.e[static_cast<uint64_t>(i)].info))
+        {
+            /* Элемент фиктивный устанавливаем этот факт и прекращаем цикл */
+            FinitElement.isFictive = false; // Да фиктивный
+            return FinitElement;            // Возврат из функции
+        }
+    }
+    /* Опредеелим теперь всю информацию о конечном элементе */
+    /* Если мы здесь значит элемент не фиктивный */
+    FinitElement.isFictive = true; // НЕ ФИКТИВНЫЙ
+
+    /* Идем по подобласти и определяем принадлежность к области */
+    
+    int32_t Map[Comand::RightBoundValAreaInfo]; // Массив всевозможных элементов подобласти
+    ZeroInitArray(Map, Comand::RightBoundValAreaInfo);
+
+    for (int32_t i = 0; i < FinitElement.FinitElementSize; i++)
+    {
+        AreaInfo Area = InfoManeger::GetAreaInfo(FinitElement.e[static_cast<uint64_t>(i)].info);
+        /* Идем по структурке и расставляем все типы что есть  */
+        for (int32_t j = 0; j < Area.size; j++)
+            Map[Area.Cond[static_cast<uint64_t>(j)]]++;
+    }
+    /* В карте лежит информация о количестве всевозможных типах */
+    /* Нам нужна тот индекс где лежит 8 это будет max*/
+    FinitElement.AreaInfo = GetArgMax(Map, Comand::RightBoundValAreaInfo);
+
+    /* Разбираемся с краевыми */
+    /* Установим локальные номера */
+    // {1, 2, 3, 4}, { 5,6,7,8 }, { 1,3,5,7 }, { 2,4,6,8 }, { 1,2,5,6 }, { 3,4,7,8 }
+    FinitElement.Bound[0].LocalIdx[0] = 0;
+    FinitElement.Bound[0].LocalIdx[1] = 1;
+    FinitElement.Bound[0].LocalIdx[2] = 2;
+    FinitElement.Bound[0].LocalIdx[3] = 3;
+
+    FinitElement.Bound[1].LocalIdx[0] = 4;
+    FinitElement.Bound[1].LocalIdx[1] = 5;
+    FinitElement.Bound[1].LocalIdx[2] = 6;
+    FinitElement.Bound[1].LocalIdx[3] = 7;
+
+    FinitElement.Bound[2].LocalIdx[0] = 0;
+    FinitElement.Bound[2].LocalIdx[1] = 2;
+    FinitElement.Bound[2].LocalIdx[2] = 4;
+    FinitElement.Bound[2].LocalIdx[3] = 6;
+
+    FinitElement.Bound[3].LocalIdx[0] = 1;
+    FinitElement.Bound[3].LocalIdx[1] = 3;
+    FinitElement.Bound[3].LocalIdx[2] = 5;
+    FinitElement.Bound[3].LocalIdx[3] = 7;
+
+    FinitElement.Bound[4].LocalIdx[0] = 0;
+    FinitElement.Bound[4].LocalIdx[1] = 1;
+    FinitElement.Bound[4].LocalIdx[2] = 4;
+    FinitElement.Bound[4].LocalIdx[3] = 5;
+
+    FinitElement.Bound[5].LocalIdx[0] = 2;
+    FinitElement.Bound[5].LocalIdx[1] = 3;
+    FinitElement.Bound[5].LocalIdx[2] = 6;
+    FinitElement.Bound[5].LocalIdx[3] = 7;
+
+    /* Даем глобальные */
+    for (int32_t i = 0; i <  FinitElement.BoundCount; i++)
+    {
+        for (int32_t j = 0; j < static_cast<int32_t>(Comand::RightBoundBoundCount); j++)
+        {
+            FinitElement.Bound[static_cast<uint64_t>(i)].GlobalIdx[static_cast<uint64_t>(j)] =  FinitElement.GlobalIdx[ FinitElement.Bound[static_cast<uint64_t>(i)].LocalIdx[static_cast<uint64_t>(j)]];
+        }
+    }
+
+    /* По все границам идем и устанавливаем информацию о границе */
+    for (int32_t i = 0; i < FinitElement.BoundCount; i++)
+    {
+        std::pair<int32_t, int32_t> MapB[Comand::RightBoundValBoundInfo];
+        ZeroInitArrayPair(MapB, Comand::RightBoundValBoundInfo);
+
+        for (int32_t j = 0; j < static_cast<int32_t>(Comand::RightBoundBoundCount); j++)
+        {
+            BoundInfo bnd = InfoManeger::GetBoundInfo(FinitElement.e[FinitElement.Bound[static_cast<uint64_t>(i)].LocalIdx[static_cast<uint64_t>(j)]].info); // Получить информацию о границах на границе
+
+            /* Идем по структуре */
+            for (int32_t k = 0; k < bnd.size; k++)
+            {
+                MapB[bnd.Cond[k]].first++;
+                MapB[bnd.Cond[k]].second = bnd.TypeCond[k];
+            }
+        }
+        /* Получаем максимальный аргумент и устанавливаем значения для границы */
+        std::pair<int32_t, int32_t> Cond = GetArgMaxPair(MapB, Comand::RightBoundValBoundInfo);
+        FinitElement.Bound[i].BoundInfo = Cond.first;
+        FinitElement.Bound[i].BoundType = Cond.second;
+    }
+
+    /* Расстановка фиктивных границ */
+    for (int32_t i = 0; i < FinitElement.BoundCount; i++)
+    {
+        if (FinitElement.Bound[i].BoundInfo != -1)
+            FinitElement.Bound[i].IsBound = true;
+    }
+
+    return FinitElement;
 }
 
 [[nodiscard]] GridStatus Grid3D_StreightQuadPrismatic::SetBaseGrid(const BaseGrid3DStreightQuadPrismatic &baseGrid_) noexcept
@@ -887,14 +1097,79 @@ FEM_StreightQuadPrismatic Grid3D_StreightQuadPrismatic::GetElement(const int32_t
     return Status;
 }
 
-FEM_StreightQuadPrismatic Grid3D_StreightQuadPrismatic::GetElement(const double x, const double y, const double z) const noexcept
+Finit_Element_StreightQuadPrismatic Grid3D_StreightQuadPrismatic::GetElement(const double x, const double y, const double z) const noexcept
 {
-    FEM_StreightQuadPrismatic FEMElement;
-    return FEMElement;
+    Finit_Element_StreightQuadPrismatic FEMElement;
+    /* Определим конечный элемент которому принадлежит точка и после запустип процедуру формирования КЭ по индексу */
+    
+    int32_t Nx = GlobalNx;
+    int32_t Ny = GlobalNy;
+    int32_t Nz = GlobalNz;
+    auto K = [Nx, Ny, Nz](int32_t _idx) -> int32_t
+    {
+        int32_t shiftXZ = 0;
+        int32_t projidx = _idx % (((Nx - 1) * (Nz - 1)));
+        if (projidx < Nx - 1)
+        {
+            shiftXZ = projidx;
+        }
+        else
+        {
+            int32_t level = static_cast<int32_t>(std::floor(projidx / (Nx - 1)));
+            int32_t start = level * Nx;
+            int32_t shift = projidx - (Nx - 1) * level;
+            shiftXZ = start + shift;
+        }
+
+        int32_t levelY = static_cast<int32_t>(std::floor((_idx) / ((Nx - 1) * (Nz - 1))));
+        int32_t shiftY = levelY * Nx * Nz;
+        return shiftY + shiftXZ;
+    };
+
+    
+    /* Расчет глобальных индексов */
+    int32_t idx = 0;
+    for(idx = 0; idx < FEMCount; idx++)
+    {
+        Finit_Element_StreightQuadPrismatic FinitElement;
+        FinitElement.GlobalIdx[0] = K(idx);
+        FinitElement.GlobalIdx[1] = FinitElement.GlobalIdx[0] + 1;
+        FinitElement.GlobalIdx[2] = FinitElement.GlobalIdx[0] + Nx;
+        FinitElement.GlobalIdx[3] = FinitElement.GlobalIdx[1] + Nx;
+
+        FinitElement.GlobalIdx[4] = FinitElement.GlobalIdx[0] + Nx * Nz;
+        FinitElement.GlobalIdx[5] = FinitElement.GlobalIdx[4] + 1;
+        FinitElement.GlobalIdx[6] = FinitElement.GlobalIdx[4] + Nx;
+        FinitElement.GlobalIdx[7] = FinitElement.GlobalIdx[5] + Nx;
+
+        for (int32_t i = 0; i < FinitElement.FinitElementSize; i++)
+        {
+            FinitElement.e[static_cast<uint64_t>(i)] = Grid[static_cast<uint64_t>(FinitElement.GlobalIdx[static_cast<uint64_t>(i)])];
+        }
+
+        double XStart = FinitElement.e[0].x;
+        double XEnd = FinitElement.e[1].x;
+
+        double ZStart = FinitElement.e[0].z;
+        double ZEnd = FinitElement.e[2].z;
+
+        double YStart = FinitElement.e[0].y;
+        double YEnd = FinitElement.e[4].y;
+
+        std::cout << "idx = " << idx << "\n";
+        std::cout << "XStart = " << XStart << " XEnd = " << XEnd << "\n";
+        std::cout << "ZStart = " << ZStart << " ZEnd = " << ZEnd << "\n";
+        std::cout << "YStart = " << YStart << " YEnd = " << YEnd << "\n";
+        std::cout << "\n";
+        if((x <= XEnd && x >= XStart) && (y <= YEnd && y >= YStart) && (z <= ZEnd && z >= ZStart)) break;
+
+    }
+    std::cout << "idx = " << idx << "\n";
+    return GetElement(idx);
 }
 
 /* Friend Functions + вспомогательные функции для некоторых нужд */
-ostream& operator<<(ostream &os, Grid3D_Size &Grid3D_Size_param)
+ostream &operator<<(ostream &os, Grid3D_Size &Grid3D_Size_param)
 {
     os << "Grid3D_Size parametrs:\n";
     os << "Dim = " << Grid3D_Size_param.Dim << "\n";
@@ -909,18 +1184,18 @@ ostream& operator<<(ostream &os, Grid3D_Size &Grid3D_Size_param)
 
 void Grid3D_StreightQuadPrismatic::PrintGridSlice(int32_t level) const
 {
-    uint64_t idx = static_cast<uint64_t>(level*GlobalNx*GlobalNz);
+    uint64_t idx = static_cast<uint64_t>(level * GlobalNx * GlobalNz);
     cout << "Start idx: " << idx << "  End idx: " << idx + static_cast<uint64_t>(GlobalNx * GlobalNz - 1) << " Step Row: " << GlobalNx << "\n";
     cout << "Format = (x,z)\n";
     cout << "y = " << Grid[idx].y << "\n";
     for (int32_t i = 0; i < GlobalNz; i++)
-		{
-			for (int32_t j = 0; j < GlobalNx; j++)
-			{
-				//cout << fixed << std::setprecision(2) << "(" << grid.Grid[idx].x << ";" << grid.Grid[idx].z << ";" << grid.Grid[idx].y << ") ";
-				printf("(%.2f;%.2f)",Grid[idx].x, Grid[idx].z);
-                idx++;
-			}
-			cout << "\n";
-		}
+    {
+        for (int32_t j = 0; j < GlobalNx; j++)
+        {
+            // cout << fixed << std::setprecision(2) << "(" << grid.Grid[idx].x << ";" << grid.Grid[idx].z << ";" << grid.Grid[idx].y << ") ";
+            printf("(%.2f;%.2f)", Grid[idx].x, Grid[idx].z);
+            idx++;
+        }
+        cout << "\n";
+    }
 }

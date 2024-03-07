@@ -15,10 +15,9 @@ int main()
             //Grid3D_Size GridSize = Grid.GetGridSize();
             Grid.PrintGridSlice(0);
             //InfoManeger::PrintInfo(Grid[3].info);
-            Status = Grid.DivideGrid(2);
-            Status = Grid.ReGenerateGrid();
-            if(Status.GetState() == State::OK)
-                Grid.PrintGridSlice(0);
+            Finit_Element_StreightQuadPrismatic Element = Grid.GetElement(0.0666666666668,0.5, 0.25);
+            Element.PrintElement();
+            
         }
         else
         {
