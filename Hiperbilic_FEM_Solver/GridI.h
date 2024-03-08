@@ -21,50 +21,50 @@ public:
     GridI() = default;
 
     /*
-    @param: const string &filename - Текстовый файл с разметкой
-    @return GridStatus
-    @result: Загрузка базовой сетки из файла
-    @warning: Валидация входных данных не предусмотрена
-    @note: Результат работы метода нельзя игнорировать
+    @param const string &filename - Текстовый файл с разметкой
+    @return GridStatus\\
+    @result Загрузка базовой сетки из файла
+    @warning Валидация входных данных не предусмотрена
+    @note Результат работы метода нельзя игнорировать
     */
     [[nodiscard]] virtual GridStatus Load(const string &filename) noexcept = 0;
 
     /*
-    @param: void
-    @return: GridStatus
-    @result: Генерация сетки
-    @note: Результат работы метода нельзя игнорировать
+    @param void
+    @return GridStatus
+    @result Генерация сетки
+    @note Результат работы метода нельзя игнорировать
     */
     [[nodiscard]] virtual GridStatus GenerateGrid() noexcept = 0;
 
     /*
-    @param: const int coef - Коэффициент дробления
-    @return: GridStatus
-    @result: Дробление сетки в заданное количество раз
-    @warning: Производит исключительно установку новых параметров дробление. Для их применения нужно вызвать метод ReGenerateGrid()
-    @note: Результат работы метода нельзя игнорировать
+    @param const int coef - Коэффициент дробления
+    @return GridStatus
+    @result Дробление сетки в заданное количество раз
+    @warning Производит исключительно установку новых параметров дробление. Для их применения нужно вызвать метод ReGenerateGrid()
+    @note Результат работы метода нельзя игнорировать
     */
     [[nodiscard]] virtual GridStatus DivideGrid(const int coef) noexcept = 0;
 
     /*
-    @param: void
-    @return: BaseGridXD
-    @result: -
+    @param void
+    @return BaseGridXD
+    @result -
     */
     inline virtual BaseGridXD GetBaseGrid() const noexcept = 0;
 
     /*
-    @param: int idx - Индекс центральной точки в глобальной нумерации
-    @return: ElementXD - Структура содержащая всю необходимую информацию о конечном элементе
-    @result: Получить конечный элемент с полным его описанием (Границы, Область)
+    @param int idx - Индекс центральной точки в глобальной нумерации
+    @return ElementXD - Структура содержащая всю необходимую информацию о конечном элементе
+    @result Получить конечный элемент с полным его описанием (Границы, Область)
     */
     virtual ElementXD GetElement(int idx) const noexcept = 0;
 
     /*
-    @param: void
-    @return: GridStatus
-    @result: Перегенерация сетки при изменении ее параметров
-    @note: Результат работы метода нельзя игнорировать
+    @param void
+    @return GridStatus
+    @result Перегенерация сетки при изменении ее параметров
+    @note Результат работы метода нельзя игнорировать
     */
     [[nodiscard]] virtual GridStatus ReGenerateGrid() noexcept = 0;
     virtual ~GridI() = default;
