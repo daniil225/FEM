@@ -58,9 +58,9 @@ public:
 
     /*
         @param const BaseGridIntegrate& _BaseGrid
-        @return void
+        @return GridStatus
     */
-    virtual void SetBaseGrid(const BaseGridIntegrate& _BaseGrid) { BaseGrid = _BaseGrid; }
+    virtual GridStatus SetBaseGrid(const BaseGridIntegrate& _BaseGrid) { BaseGrid = _BaseGrid; }
 
     virtual ~GridIntegrateI() = default;
 };

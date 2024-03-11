@@ -47,6 +47,14 @@ public:
     [[nodiscard]] virtual GridStatus DivideGrid(const int coef) noexcept = 0;
 
     /*
+        @param void
+        @return GridStatus\\
+        @result Перегенерация сетки при изменении ее параметров
+        @note Результат работы метода нельзя игнорировать
+    */
+    [[nodiscard]] virtual GridStatus ReGenerateGrid() noexcept = 0;
+
+    /*
     @param void
     @return BaseGridXD
     @result -

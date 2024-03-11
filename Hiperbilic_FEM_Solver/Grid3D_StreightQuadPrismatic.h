@@ -182,6 +182,7 @@ struct BaseGrid3DStreightQuadPrismatic
         this->DivideParam = baseGrid_.DivideParam;
         this->isReadyToUse = baseGrid_.isReadyToUse;
         this->L = baseGrid_.L;
+        this->P = baseGrid_.P;
         this->Nx = baseGrid_.Nx;
         this->Ny = baseGrid_.Ny;
         this->Nz = baseGrid_.Nz;
@@ -197,6 +198,7 @@ struct BaseGrid3DStreightQuadPrismatic
         this->DivideParam = baseGrid_.DivideParam;
         this->isReadyToUse = baseGrid_.isReadyToUse;
         this->L = baseGrid_.L;
+        this->P = baseGrid_.P;
         this->Nx = baseGrid_.Nx;
         this->Ny = baseGrid_.Ny;
         this->Nz = baseGrid_.Nz;
@@ -454,7 +456,7 @@ public:
         @warning Валидация входных данных не предусмотрена
         @note Результат работы метода нельзя игнорировать
     */
-    [[nodiscard]] GridStatus Load(const string &filename) noexcept;
+    [[nodiscard]] virtual GridStatus Load(const string &filename) noexcept;
 
     /*
         @param void
@@ -462,7 +464,7 @@ public:
         @result Генерация сетки
         @note Результат работы метода нельзя игнорировать
     */
-    [[nodiscard]] GridStatus GenerateGrid() noexcept;
+    [[nodiscard]] virtual GridStatus GenerateGrid() noexcept;
 
     /*
         @param const int coef - Коэффициент дробления
@@ -471,7 +473,7 @@ public:
         @warning Производит исключительно установку новых параметров дробление. Для их применения нужно вызвать метод ReGenerateGrid()
         @note Результат работы метода нельзя игнорировать
     */
-    [[nodiscard]] GridStatus DivideGrid(const int32_t coef) noexcept;
+    [[nodiscard]] virtual GridStatus DivideGrid(const int32_t coef) noexcept;
 
     /*
         @param void
@@ -479,7 +481,7 @@ public:
         @result Перегенерация сетки при изменении ее параметров
         @note Результат работы метода нельзя игнорировать
     */
-    [[nodiscard]] GridStatus ReGenerateGrid() noexcept;
+    [[nodiscard]] virtual GridStatus ReGenerateGrid() noexcept;
 
     /* Гетеры и сеттеры */
     /*
@@ -487,14 +489,14 @@ public:
         @return BaseGrid3DStreightQuadPrismatic\\
         @result -
     */
-    inline BaseGrid3DStreightQuadPrismatic GetBaseGrid() const noexcept { return baseGrid; }
+    inline virtual BaseGrid3DStreightQuadPrismatic GetBaseGrid() const noexcept { return baseGrid; }
 
     /*
         @param int idx - Индекс центральной точки в глобальной нумерации
         @return Finit_Element_StreightQuadPrismatic - Структура содержащая всю необходимую информацию о конечном элементе
         @result Получить конечный элемент с полным его описанием (Границы, Область)
     */
-    Finit_Element_StreightQuadPrismatic GetElement(const int32_t idx) const noexcept;
+    virtual Finit_Element_StreightQuadPrismatic GetElement(const int32_t idx) const noexcept;
 
     /*
         @param const BaseGrid3DStreightQuadPrismatic& baseGrid_ - Базовая сетка области
@@ -503,7 +505,7 @@ public:
         @warning Не изменяет уже построенной сетки. Для применения изменений нужно вызвать метод ReGenerateGrid()
         @note Результат работы метода нельзя игнорировать
     */
-    [[nodiscard]] GridStatus SetBaseGrid(const BaseGrid3DStreightQuadPrismatic &baseGrid_) noexcept;
+    [[nodiscard]]  GridStatus SetBaseGrid(const BaseGrid3DStreightQuadPrismatic &baseGrid_) noexcept;
 
     /*
         @param int idx - индекс точки в МКЭ сетке
